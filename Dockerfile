@@ -1,5 +1,8 @@
 FROM ubuntu:xenial
 MAINTAINER Lars Kellogg-Stedman <lars@oddbit.com>
+MAINTAINER mf-lit <mf-lit@vq5.net>
+
+ENV LMS_VERSION="7.9.2"
 
 ENV SQUEEZE_VOL /srv/squeezebox
 ENV LANG C.UTF-8
@@ -19,7 +22,7 @@ RUN apt-get update && \
 		&& \
 	apt-get clean
 
-RUN url=$(curl "$PACKAGE_VERSION_URL" | sed 's/_all\.deb/_amd64\.deb/') && \
+RUN url="http://downloads.slimdevices.com/LogitechMediaServer_v${LMS_VERSION}/logitechmediaserver_${LMS_VERSION}_amd64.deb" && \
 	curl -Lsf -o /tmp/logitechmediaserver.deb $url && \
 	dpkg -i /tmp/logitechmediaserver.deb && \
 	rm -f /tmp/logitechmediaserver.deb && \
@@ -29,7 +32,7 @@ RUN url=$(curl "$PACKAGE_VERSION_URL" | sed 's/_all\.deb/_amd64\.deb/') && \
 RUN userdel squeezeboxserver
 
 VOLUME $SQUEEZE_VOL
-EXPOSE 3483 3483/udp 9000 9090
+EXPOSE 3483 3483/udp 9000 9090 5353/udp
 
 COPY entrypoint.sh /entrypoint.sh
 COPY start-squeezebox.sh /start-squeezebox.sh
